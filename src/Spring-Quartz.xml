@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+       default-lazy-init="true">
+
+    <description>Quartz的本地Cron式执行任务配置</description>
+
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/application.properties"/>
+
+    <!-- Quartz本地Schduler -->
+    <bean id="localQuartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- Triggers集成 -->
+        <property name="triggers">
+            <list>
+                <ref bean="tbCollectJobTrigger"/>
+                <ref bean="gjCollectJobTrigger"/>
+                <ref bean="hrbgjCollectJobTrigger"/>
+                <ref bean="wbCollectJobTrigger"/>
+            </list>
+        </property>
+
+        <!-- Quartz配置, 本地运行无需单独的quartz.properties文件，在此简单配置即可 -->
+        <property name="configLocation" value="classpath:application.properties"/>
+
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.threadPool.threadCount">50</prop>
+            </props>
+        </property>
+        <!-- 启动时延期2秒开始任务 -->
+        <property name="startupDelay" value="5"/>
+
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+
+        <property name="schedulerContextAsMap">
+            <map>
+                <entry key="searchTask" value-ref="searchTask"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="searchTask" class="com.wq.schedule.SearchTask"/>
+
+    <!--58 扫描任务并执行 开始-->
+    <bean id="wbCollectJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="wbCollectJobDetail"/>
+        <property name="repeatInterval" value="${com.wq.source.wb.cycle}"/>
+        <property name="repeatCount" value="-1"/>
+    </bean>
+
+    <bean name="wbCollectJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetBeanName" value="searchTask"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="arguments" value="${com.wq.source.wb.parser}"></property>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!--58 扫描任务并执行 结束-->
+
+    <!--哈尔滨 赶集 扫描任务并执行 开始-->
+    <bean id="hrbgjCollectJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="hrbgjCollectJobDetail"/>
+        <property name="repeatInterval" value="${com.wq.source.hrbgj.cycle}"/>
+        <property name="repeatCount" value="-1"/>
+    </bean>
+
+    <bean name="hrbgjCollectJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetBeanName" value="searchTask"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="arguments" value="${com.wq.source.hrbgj.parser}"></property>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!--哈尔滨 赶集 扫描任务并执行 结束-->
+
+    <!--赶集 扫描任务并执行 开始-->
+    <bean id="gjCollectJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="gjCollectJobDetail"/>
+        <property name="repeatInterval" value="${com.wq.source.gj.cycle}"/>
+        <property name="repeatCount" value="-1"/>
+    </bean>
+
+    <bean name="gjCollectJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetBeanName" value="searchTask"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="arguments" value="${com.wq.source.gj.parser}"></property>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!--赶集 扫描任务并执行 结束-->
+
+    <!--淘宝 扫描任务并执行 开始-->
+    <bean id="tbCollectJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <property name="jobDetail" ref="tbCollectJobDetail"/>
+        <property name="repeatInterval" value="${com.wq.source.tb.cycle}"/>
+        <property name="repeatCount" value="-1"/>
+    </bean>
+
+    <bean name="tbCollectJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetBeanName" value="searchTask"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="arguments" value="${com.wq.source.tb.parser}"></property>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <!--淘宝 扫描任务并执行 结束-->
+</beans>
