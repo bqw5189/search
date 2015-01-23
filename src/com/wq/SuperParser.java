@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +50,7 @@ public abstract class SuperParser implements IParser {
     @Override
     public void run() {
         try {
-            List<HtmlEntity> htmlEntityList = parseHtml(sourceUrl.replaceAll("\\$\\{key}", key));
+            List<HtmlEntity> htmlEntityList = parseHtml(sourceUrl.replaceAll("\\$\\{key}", URLEncoder.encode(key,"gbk")));
 
             for (HtmlEntity entity : htmlEntityList) {
                 entity.setKey(key);

@@ -23,12 +23,12 @@ public class Utils {
 
         Runtime rt = Runtime.getRuntime();
 
-//        try {
-//            rt.exec("sogouexplorer.exe " + url);
-//            rt.exec("sogouexplorer.exe " + url);
-//        } catch (IOException e) {
-//                //e.printStackTrace();
-//        }
+        try {
+            rt.exec("sogouexplorer.exe " + url);
+            rt.exec("sogouexplorer.exe " + url);
+        } catch (IOException e) {
+                //e.printStackTrace();
+        }
         myMusicPlay.stop();
         myMusicPlay.start();//播放一次
 

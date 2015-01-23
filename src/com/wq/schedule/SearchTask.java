@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * 任务扫描 根据 任务类型 调用相应处理脚本
  * 逆变器数据采集
@@ -23,9 +25,13 @@ public class SearchTask {
 
 
     static {
-        KEYS = System.getProperty("com.wq.keys").split(",");
-
         SOURCES = System.getProperty("com.wq.source").split(",");
+
+        try {
+            KEYS = new String(System.getProperty("com.wq.keys").getBytes("ISO-8859-1"),"utf8").split(",");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void execute(String parserName) throws Exception {
