@@ -64,7 +64,7 @@ public abstract class SuperParser implements IParser {
 
                     OPEND_URL.add(entity.getLink());
                 } else {
-                    break;
+                    continue;
                 }
             }
         } catch (SocketTimeoutException e) {
